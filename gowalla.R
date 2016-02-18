@@ -26,7 +26,6 @@ fullDataCols <- c("user",
 colnames(edgeList) <- edgeListCols
 colnames(fullData) <- fullDataCols
 
-
 ## Create separate date and time columns for hours/minutes
 fullData$date <- as.Date(fullData[,'check-in_time']) 
 fullData$time <- format(fullData[,'check-in_time'], "%H:%M")
@@ -35,7 +34,6 @@ fullData$minute <- format(fullData[,'check-in_time'], "%M")
 
 ## Drop the original check-in_time
 fullData <- subset(fullData, select = -2)
-
 
 ## We need to start our node values at 1 because iGraph doesn't like zero operators
 edgeList <- edgeList + 1
@@ -101,7 +99,6 @@ ggplot(degree_df,aes(time)) +
 
 system.time(communities_friends <- fastgreedy.community(edgeList_undirectedsumma))
 
-
 ## Grabbing various community statistics
 membership(communities_friends[,2])
 sort(sizes(communities_friends), decreasing = TRUE)
@@ -109,9 +106,7 @@ algorithm(communities_friends)
 merges(communities_friends)
 length(communities_friends)
 
-
 res_g <- simplify(contract(edgeList_undirected, membership(communities_friends))) 
-
 
 sp_full_in <- shortest.paths(edgeList_undirected, mode='in',)
 
@@ -131,16 +126,3 @@ two_mode_unique <- two_mode[!duplicated(two_mode), ]
 as.tnet(two_mode_unique, type = NULL)
 
 clustering_local_tm(two_mode_unique)
-
-
-
-library(igraph)
-
-friendshipMatrix <- as.matrix(edgeList[,1:2])
-friendship_graph_obj <- graph.edgelist(friendshipMatrix)
-
-E(g)$arrow.size <- .50
-
-## This plot takes a very long time -- DO NOT EXECUTE
-plot(g, layout = layout.fruchterman.reingold, 
-     edge.curved = TRUE)
