@@ -9,7 +9,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import time
 
-
 # Read the data
 gowalla_edges = pd.read_csv("gowalla_edges.txt", sep="\t", header = None)
 
