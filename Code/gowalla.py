@@ -7,6 +7,8 @@ __author__ = 'John'
 import networkx as nx
 import pandas as pd
 import matplotlib.pyplot as plt
+import time
+
 
 # Read the data
 gowalla_edges = pd.read_csv("gowalla_edges.txt", sep="\t", header = None)
@@ -42,8 +44,22 @@ katz_dict = nx.katz_centrality(friendship_graph)
 katz_list = sorted(katz_dict.items(), key=lambda x:x[1], reverse=True)
 katz_list[:10]
 
-# Clique
+# Distance
+# DONT EXECUTE--TAKES TOO LONG
+diameter = nx.diameter(friendship_graph)
+diameter
 
+# Center
+# DONT EXECUTE--TAKES TOO LONG
+center = nx.center(friendship_graph)
+center
+
+# Eccentricity
+# DONT EXECUTE--TAKES TOO LONG
+eccentricity = nx.eccentricity(friendship_graph)
+eccentricity
+
+# Clique
 clique = nx.max_clique(friendship_graph)
 
 threezeroeight_cliques = nx.cliques_containing_node(friendship_graph,308)
@@ -55,59 +71,57 @@ transitivity = nx.transitivity(friendship_graph)
 # Return density of graph
 nx.density(friendship_graph)
 
-import time
-
-start_time = time.time()
-
 # Return Connectivity of a graph
-# DONT--TAKES TOO LONG
+# DONT EXECUTE--TAKES TOO LONG
 connectivity_dict = nx.node_connectivity(friendship_graph)
 
 connectivity = nx.node_connectivity(friendship_graph)
 
 # Shortest Path
-# DON'T TOO LONG
+# DONT EXECUTE--TAKES TOO LONG
 shortest_path = nx.average_shortest_path_length(friendship_graph)
 shortest_path = nx.average_shortest_path_length(friendship_graph)
 
-# DON'T TOO LONG
+# Closeness
+# DONT EXECUTE--TAKES TOO LONG
 closeness = nx.closeness_centrality(friendship_graph)
 
-# WORKS
+# K-Core
 three_core = nx.k_core(friendship_graph, k=3)
 
-# WORKS
+# PageRank Centrality
 page_rank = nx.pagerank(friendship_graph)
 page_rank_list = sorted(page_rank.items(), key=lambda x:x[1], reverse=True)
-
 page_rank_list[:10]
 
-
-# WORKS
+# Cliques
 find_cliques = nx.find_cliques(friendship_graph)
 
 # Clustering Coefficient
 high_centrality_nodes = [308,460,2187,2010,221,528,2256,1150,506,1451]
 clustering = nx.clustering(friendship_graph,nodes=high_centrality_nodes)
 
-
 # Creating a subgraph of the most central node
 threezeroeight_neighbors = friendship_graph.neighbors(308)
 threezeroeight_subgraph = friendship_graph.subgraph(threezeroeight_neighbors)
 nx.write_graphml(threezeroeight_subgraph, '308.graphml')
 
-
-end_time = time.time()
-
-print("Elapsed time was %g seconds" % (end_time - start_time))
-
+## Analyzing Check-in Data
 gowalla_checkins = pd.read_csv("gowalla_totalCheckins.txt", sep="\t", header = None)
 gowalla_checkins[0] = gowalla_checkins[0] + 1
 gowalla_checkins.columns = ['user', 'time', 'lat', 'long', 'location_id']
 
+## Grouping by check-in locations and returning the top places
 grouped_checkins = gowalla_checkins.groupby('location_id')
-
 location_counts = grouped_checkins._count().sort(columns='user', ascending=False)
 location_counts[:10]
+top_100_locations = list(location_counts.index[:100])
 
-list(location_counts.index[:100])
+## Grouping by users and returning the top places
+grouped_user_checkins = gowalla_checkins.groupby('user')
+user_checkin_counts = grouped_user_checkins._count().sort(columns='location_id', ascending=False)
+user_checkin_counts[:100]
+list(user_checkin_counts.index[:100])
+
+## Getting Lat and Long of Top Locations
+gowalla_checkins[gowalla_checkins['location_id'].isin(top_100_locations)]

@@ -106,23 +106,3 @@ algorithm(communities_friends)
 merges(communities_friends)
 length(communities_friends)
 
-res_g <- simplify(contract(edgeList_undirected, membership(communities_friends))) 
-
-sp_full_in <- shortest.paths(edgeList_undirected, mode='in',)
-
-####################
-######GRAPHING######
-####################
-
-install.packages("tnet")
-library(tnet)
-
-## This following command will subset a 2-mode node list. One node is the user and the other is the location.
-two_mode <- fullData[c(1,4)]
-
-## We will also need to remove duplicate entries since we are not 
-two_mode_unique <- two_mode[!duplicated(two_mode), ]
-
-as.tnet(two_mode_unique, type = NULL)
-
-clustering_local_tm(two_mode_unique)
